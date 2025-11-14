@@ -12,7 +12,7 @@ BIN2 = 26
 # Frequency for PWM
 FREQ = 1000
 
-class Controls:
+class PiTank:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(AIN1, GPIO.OUT)
@@ -46,41 +46,37 @@ class Controls:
 
     def stop(self):
         """Stop both motors."""
-        Controls.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, 0)
-        Controls.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, 0)
+        PiTank.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, 0)
+        PiTank.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, 0)
 
     def turn_left(self, speed=50, time_duration=0.4):
         """Turn left by running right motor forward and left motor backward."""
-        Controls.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, speed)
-        Controls.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, 0)
+        PiTank.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, speed)
+        PiTank.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, -speed)
         time.sleep(time_duration)
         self.stop()
 
     def turn_right(self, speed=50, time_duration=0.4):
         """Turn right by running left motor forward and right motor backward."""
-        Controls.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, 0)
-        Controls.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, speed)
+        PiTank.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, -speed)
+        PiTank.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, speed)
         time.sleep(time_duration)
         self.stop()
 
     def move_forward(self, speed=50):
         """Move forward by running both motors forward."""
-        Controls.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, speed)
-        Controls.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, speed)
+        PiTank.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, speed)
+        PiTank.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, speed)
 
     def move_backward(self, speed=50):
         """Move backward by running both motors backward."""
-        Controls.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, -speed)
-        Controls.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, -speed)
+        PiTank.set_motor_speed(self.pwm_AIN1, self.pwm_AIN2, -speed)
+        PiTank.set_motor_speed(self.pwm_BIN1, self.pwm_BIN2, -speed)
     
 if __name__ == "__main__":
-    controls = Controls()
+    controls = PiTank()
     try:
-        controls.move_backward(100)
-        time.sleep(2)
-        controls.turn_right(100, 1)
-        controls.move_forward(100)
-        time.sleep(2)
+        controls.turn_right(100, 0.4) # this is around 90 degrees
     except KeyboardInterrupt:
         pass
     finally:
